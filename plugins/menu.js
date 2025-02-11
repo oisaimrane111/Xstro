@@ -1,9 +1,3 @@
-import { font } from '#lib';
-import { config } from '#config';
-import { bot, commands } from '#src';
-import { formatBytes, getRandom, runtime } from '#utils';
-import { platform, totalmem, freemem } from 'os';
-
 bot(
   {
     pattern: 'menu',
@@ -16,6 +10,7 @@ bot(
       (cmd) =>
         cmd.pattern && !cmd.dontAddCommandList && !cmd.pattern.toString().includes('undefined')
     ).length;
+    
     let menuInfo = `\`\`\`
 ╭─── ${config.BOT_INFO.split(';')[1]} ────
 │ Prefix: ${getRandom(prefix)}
@@ -43,7 +38,6 @@ bot(
       }, {});
 
     const sortedTypes = Object.keys(commandsByType).sort();
-
     let totalCommands = 1;
 
     sortedTypes.forEach((type) => {
@@ -55,32 +49,14 @@ bot(
       });
       menuInfo += font.tiny(`╰────────────\n`);
     });
+
+    // GIF URL (Replace with your actual hosted GIF URL)
+    const gifUrl = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXY5Y3N4aWgwb2QwbnloMzBlYXlqaDJnc2J3cjdvZmt0bXk1dmY3MiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ypg1zWzMxl17y/giphy.gif'; 
+
+    // Send the GIF before the menu
+    await message.send(gifUrl, { type: 'image' });
+
+    // Send the menu info
     return await message.send(menuInfo.trim());
-  }
-);
-
-bot(
-  {
-    pattern: 'list',
-    public: true,
-    desc: 'Show All Commands',
-    dontAddCommandList: true,
-  },
-  async (message) => {
-    let cmdsList = 'Command List\n\n';
-    let cmdList = [];
-    let cmd, desc;
-    commands.map((command) => {
-      if (command.pattern) cmd = command.pattern.toString().split(/\W+/)[2];
-      desc = command.desc || false;
-      if (!command.dontAddCommandList && cmd !== undefined) cmdList.push({ cmd, desc });
-    });
-    cmdList.sort((a, b) => a.cmd.localeCompare(b.cmd));
-    cmdList.forEach(({ cmd, desc }, num) => {
-      cmdsList += `${(num += 1)} ${cmd}\n`;
-      if (desc) cmdsList += `${desc}\n\n`;
-    });
-
-    return await message.reply(cmdsList);
   }
 );
