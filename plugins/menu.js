@@ -12,15 +12,13 @@ bot(
     dontAddCommandList: true,
   },
   async (message, _, { mode, prefix }) => {
-    try {
-      const cmds = commands.filter(
-        (cmd) =>
-          cmd.pattern && !cmd.dontAddCommandList && !cmd.pattern.toString().includes('undefined')
-      ).length;
-
-      let menuInfo = `\`\`\`
+    const cmds = commands.filter(
+      (cmd) =>
+        cmd.pattern && !cmd.dontAddCommandList && !cmd.pattern.toString().includes('undefined')
+    ).length;
+    let menuInfo = `\`\`\`
 ╭─── ${config.BOT_INFO.split(';')[1]} ────
-│const gifUrl = 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZW5mNDY5YTYwamRkZnJxb2c1dWlsc3l2M3F1eWRnMnZ5bXh2aDBoZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ypg1zWzMxl17y/giphy.gif';
+│ const gifUrl = 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZW5mNDY5YTYwamRkZnJxb2c1dWlsc3l2M3F1eWRnMnZ5bXh2aDBoZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ypg1zWzMxl17y/giphy.gif';
 │Prefix: ${getRandom(prefix)}
 │ Owner: ${config.BOT_INFO.split(';')[0]}		
 │ Plugins: ${cmds}
@@ -34,41 +32,56 @@ bot(
 │ Version: ${config.VERSION}
 ╰─────────────\`\`\`\n`;
 
-      const commandsByType = commands
-        .filter((cmd) => cmd.pattern && !cmd.dontAddCommandList)
-        .reduce((acc, cmd) => {
-          const type = cmd.type || 'Misc';
-          if (!acc[type]) {
-            acc[type] = [];
-          }
-          acc[type].push(cmd.pattern.toString().toLowerCase().split(/\W+/)[2]);
-          return acc;
-        }, {});
+    const commandsByType = commands
+      .filter((cmd) => cmd.pattern && !cmd.dontAddCommandList)
+      .reduce((acc, cmd) => {
+        const type = cmd.type || 'Misc';
+        if (!acc[type]) {
+          acc[type] = [];
+        }
+        acc[type].push(cmd.pattern.toString().toLowerCase().split(/\W+/)[2]);
+        return acc;
+      }, {});
 
-      const sortedTypes = Object.keys(commandsByType).sort();
-      let totalCommands = 1;
+    const sortedTypes = Object.keys(commandsByType).sort();
 
-      sortedTypes.forEach((type) => {
-        const sortedCommands = commandsByType[type].sort();
-        menuInfo += font.tiny(`╭──── *${type}* ────\n`);
-        sortedCommands.forEach((cmd) => {
-          menuInfo += font.tiny(`│${totalCommands}· ${cmd}\n`);
-          totalCommands++;
-        });
-        menuInfo += font.tiny(`╰────────────\n`);
+    let totalCommands = 1;
+
+    sortedTypes.forEach((type) => {
+      const sortedCommands = commandsByType[type].sort();
+      menuInfo += font.tiny(`╭──── *${type}* ────\n`);
+      sortedCommands.forEach((cmd) => {
+        menuInfo += font.tiny(`│${totalCommands}· ${cmd}\n`);
+        totalCommands++;
       });
+      menuInfo += font.tiny(`╰────────────\n`);
+    });
+    return await message.send(menuInfo.trim());
+  }
+);
 
-      // GIF URL
-     
+bot(
+  {
+    pattern: 'list',
+    public: true,
+    desc: 'Show All Commands',
+    dontAddCommandList: true,
+  },
+  async (message) => {
+    let cmdsList = 'Command List\n\n';
+    let cmdList = [];
+    let cmd, desc;
+    commands.map((command) => {
+      if (command.pattern) cmd = command.pattern.toString().split(/\W+/)[2];
+      desc = command.desc || false;
+      if (!command.dontAddCommandList && cmd !== undefined) cmdList.push({ cmd, desc });
+    });
+    cmdList.sort((a, b) => a.cmd.localeCompare(b.cmd));
+    cmdList.forEach(({ cmd, desc }, num) => {
+      cmdsList += `${(num += 1)} ${cmd}\n`;
+      if (desc) cmdsList += `${desc}\n\n`;
+    });
 
-      // Send the GIF first
-      await message.send({ image: { url: gifUrl }, caption: "Here's the menu! 📜" });
-
-      // Send the menu text
-      return await message.send(menuInfo.trim());
-    } catch (error) {
-      console.error('Error in menu command:', error);
-      return await message.reply('❌ Error loading the menu. Please try again later.');
-    }
+    return await message.reply(cmdsList);
   }
 );
