@@ -20,7 +20,8 @@ bot(
 
       let menuInfo = `\`\`\`
 ╭─── ${config.BOT_INFO.split(';')[1]} ────
-│ Prefix: ${getRandom(prefix)}
+│const gifUrl = 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZW5mNDY5YTYwamRkZnJxb2c1dWlsc3l2M3F1eWRnMnZ5bXh2aDBoZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ypg1zWzMxl17y/giphy.gif';
+│Prefix: ${getRandom(prefix)}
 │ Owner: ${config.BOT_INFO.split(';')[0]}		
 │ Plugins: ${cmds}
 │ Mode: ${mode ? 'Private' : 'Public'}
@@ -58,7 +59,7 @@ bot(
       });
 
       // GIF URL
-      const gifUrl = 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZW5mNDY5YTYwamRkZnJxb2c1dWlsc3l2M3F1eWRnMnZ5bXh2aDBoZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ypg1zWzMxl17y/giphy.gif';
+     
 
       // Send the GIF first
       await message.send({ image: { url: gifUrl }, caption: "Here's the menu! 📜" });
