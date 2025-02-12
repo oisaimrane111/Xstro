@@ -18,7 +18,7 @@ bot(
     ).length;
     let menuInfo = `\`\`\`
 ╭─── ${config.BOT_INFO.split(';')[1]} ────
-│Prefix: ${getRandom(prefix)}
+│ Prefix: ${getRandom(prefix)}
 │ Owner: ${config.BOT_INFO.split(';')[0]}		
 │ Plugins: ${cmds}
 │ Mode: ${mode ? 'Private' : 'Public'}
